@@ -132,9 +132,16 @@ AC_CANONICAL_HOST
 AC_MSG_CHECKING(for MIDI API)
 
 AS_IF([test "x$with_jack" = "xyes"], [
-api="$api -D__UNIX_JACK__"
-AC_MSG_RESULT(using JACK)
-AC_CHECK_LIB(jack, jack_client_open, , AC_MSG_ERROR(JACK support requires the jack library!))])
+  AC_MSG_RESULT(using JACK)
+  AC_CHECK_LIB(jack, jack_client_open, , AC_MSG_ERROR(JACK support requires the jack library!))
+  api="$api -D__UNIX_JACK__"
+  req="$req jack"
+])
+
+AS_IF([test "x$with_jack" = "xyes"], [
+  AC_MSG_RESULT(using JACK)
+  AC_CHECK_LIB(jack, jack_port_rename, AC_DEFINE(JACK_HAS_PORT_RENAME), )
+])
 
 case $host in
   *-*-linux*)
@@ -153,6 +160,11 @@ case $host in
     req="$req alsa"
   )
 
+  # Checks for pthread library.
+  AC_CHECK_LIB(pthread, pthread_create, , AC_MSG_ERROR(RtMidi requires the pthread library!))
+  ;;
+
+  *-*-freebsd*)
   # Checks for pthread library.
   AC_CHECK_LIB(pthread, pthread_create, , AC_MSG_ERROR(RtMidi requires the pthread library!))
   ;;
@@ -177,7 +189,7 @@ case $host in
   )
   ;;
 
-  *-mingw32*)
+  *-mingw32*|*-mingw64*)
   # Look for WinMM flag
   AS_IF([test "x$with_winmm" = "xyes"], [
     AC_MSG_RESULT(using WinMM)
