@@ -23,6 +23,7 @@
 /doc/html/
 /tests/Makefile.in
 /tests/Makefile
+/build*/
 /tests/.deps/
 /tests/.libs/
 /tests/cmidiin

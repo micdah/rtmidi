@@ -38,7 +38,7 @@ type API C.enum_RtMidiApi
 const (
 	// APIUnspecified searches for a working compiled API.
 	APIUnspecified API = C.RT_MIDI_API_UNSPECIFIED
-	// APIMacOSXCore uses Macintosh OS-X Core Midi API.
+	// APIMacOSXCore uses Macintosh OS-X CoreMIDI API.
 	APIMacOSXCore = C.RT_MIDI_API_MACOSX_CORE
 	// APILinuxALSA uses the Advanced Linux Sound Architecture API.
 	APILinuxALSA = C.RT_MIDI_API_LINUX_ALSA
@@ -70,9 +70,9 @@ func (api API) String() string {
 
 // CompiledAPI determines the available compiled MIDI APIs.
 func CompiledAPI() (apis []API) {
-	n := C.rtmidi_get_compiled_api(nil)
+	n := C.rtmidi_get_compiled_api(nil, 0)
 	capis := make([]C.enum_RtMidiApi, n, n)
-	C.rtmidi_get_compiled_api(&capis[0])
+	C.rtmidi_get_compiled_api(&capis[0], _Ctype_uint(n))
 	for _, capi := range capis {
 		apis = append(apis, API(capi))
 	}
